@@ -10,8 +10,7 @@ except:
     from itertools import zip_longest as izip_longest
 import numpy as np
 
-from ._caffe import Net, SGDSolver, NesterovSolver, AdaGradSolver, \
-        RMSPropSolver, AdaDeltaSolver, AdamSolver, NCCL, Timer
+from ._caffe import Net
 import caffe.io
 
 import six
