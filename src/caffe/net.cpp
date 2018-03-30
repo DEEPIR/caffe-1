@@ -151,7 +151,7 @@ template <typename Dtype> void Net<Dtype>::Init(const NetParameter &in_param) {
   }
   LOG(INFO) << "Network initialization done.";
 
-  blobs_.clear();
+  //	  blobs_.clear();
 
   /*
   {
