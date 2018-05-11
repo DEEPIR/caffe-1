@@ -2,6 +2,7 @@
 #include <functional>
 #include <map>
 #include <vector>
+#include <float.h>
 
 #include "thrust/functional.h"
 #include "thrust/sort.h"
