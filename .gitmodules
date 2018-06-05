@@ -1,0 +1,3 @@
+[submodule "cmake/cmake"]
+	path = cmake/common
+	url = git@github.com:DEEPIR/cmake.git
