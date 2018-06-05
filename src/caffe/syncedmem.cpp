@@ -18,11 +18,6 @@
 
 namespace caffe {
 
-size_t SyncedMemory::get_used_size() { return 0; }
-SyncedMemory::SyncedMemory()
-    : cpu_ptr_(NULL), gpu_ptr_(NULL), size_(0), head_(UNINITIALIZED),
-      own_cpu_data_(false), cpu_malloc_use_cuda_(false), own_gpu_data_(false) {}
-
 SyncedMemory::SyncedMemory(size_t size)
     : cpu_ptr_(NULL), gpu_ptr_(NULL), size_(size), head_(UNINITIALIZED),
       own_cpu_data_(false), cpu_malloc_use_cuda_(false), own_gpu_data_(false) {}
@@ -214,7 +209,7 @@ void SyncedMemory::gpu_free(void *data) {
     device_pool_.reset();
     return;
   }
-  CUDA_CHECK(cudaStreamSynchronize(cudaStreamPerThread));
+  //CUDA_CHECK(cudaStreamSynchronize(cudaStreamPerThread));
   CUDA_CHECK(cudaFree(data));
 }
 #endif
