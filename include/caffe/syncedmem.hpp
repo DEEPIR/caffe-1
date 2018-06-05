@@ -18,9 +18,8 @@ namespace caffe {
  *
  * TODO(dox): more thorough description.
  */
-class SyncedMemory {
+class SyncedMemory final {
 public:
-  SyncedMemory();
   explicit SyncedMemory(size_t size);
   ~SyncedMemory();
   const void *cpu_data();
@@ -32,8 +31,6 @@ public:
   enum SyncedHead { UNINITIALIZED, HEAD_AT_CPU, HEAD_AT_GPU, SYNCED };
   SyncedHead head() { return head_; }
   size_t size() { return size_; }
-
-  static size_t get_used_size();
 
   std::shared_ptr<deepir::allocator::buddy_pool> host_pool_;
   std::shared_ptr<deepir::allocator::buddy_pool> device_pool_;
