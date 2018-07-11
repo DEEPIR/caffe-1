@@ -45,7 +45,7 @@ protected:
   void Forward_const_cpu(const vector<Blob<Dtype> *> &bottom,
                          const vector<Blob<Dtype> *> &top) const override {}
 
-  int channels_, height_, width_, size_;
+  int channels_{}, height_{}, width_{}, size_{};
 };
 
 } // namespace caffe
