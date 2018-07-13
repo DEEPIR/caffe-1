@@ -1,5 +1,12 @@
 cmake_minimum_required(VERSION 3.9)
 
+if(POLICY CMP0046)
+  cmake_policy(SET CMP0046 NEW)
+endif()
+if(POLICY CMP0054)
+  cmake_policy(SET CMP0054 NEW)
+endif()
+
 # ---[ Caffe project
 project(Caffe C CXX)
 
