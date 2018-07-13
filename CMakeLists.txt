@@ -42,7 +42,7 @@ include(cmake/Targets.cmake)
 include(cmake/Misc.cmake)
 include(cmake/Summary.cmake)
 include(cmake/ConfigGen.cmake)
-include(cmake/common/static_code_analysis.cmake)
+include(cmake/common/all.cmake)
 
 # ---[ Options
 caffe_option(CPU_ONLY  "Build Caffe without CUDA support" OFF) # TODO: rename to USE_CUDA
@@ -52,7 +52,6 @@ caffe_option(BUILD_python "Build Python wrapper" ON)
 set(python_version "2" CACHE STRING "Specify which Python version to use")
 caffe_option(BUILD_python_layer "Build the Caffe Python layer" ON)
 caffe_option(USE_OPENCV "Build with OpenCV support" ON)
-caffe_option(USE_OPENMP "Link with OpenMP (when your BLAS wants OpenMP and you get linker errors)" OFF)
 
 # ---[ Dependencies
 include(cmake/Dependencies.cmake)
@@ -107,8 +106,6 @@ endif()
 add_subdirectory(src/caffe)
 
 add_subdirectory(python)
-# ---[ Linter target
-add_custom_target(lint COMMAND ${CMAKE_COMMAND} -P ${PROJECT_SOURCE_DIR}/cmake/lint.cmake)
 
 # ---[ pytest target
 if(build_python)
