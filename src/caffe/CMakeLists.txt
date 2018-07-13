@@ -36,8 +36,6 @@ set_target_properties(caffe PROPERTIES
     SOVERSION ${CAFFE_TARGET_SOVERSION}
     )
 
-# ---[ Tests
- add_subdirectory(test)
 
 # ---[ Install
 install(DIRECTORY ${Caffe_INCLUDE_DIR}/caffe DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
