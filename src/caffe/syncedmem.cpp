@@ -209,7 +209,6 @@ void SyncedMemory::gpu_free(void *data) {
     device_pool_.reset();
     return;
   }
-  //CUDA_CHECK(cudaStreamSynchronize(cudaStreamPerThread));
   CUDA_CHECK(cudaFree(data));
 }
 #endif
