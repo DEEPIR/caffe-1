@@ -215,7 +215,7 @@ class Blob {
   void FromProto(const BlobProto& proto, bool reshape = true);
 
   /// @brief Scale the blob data by a constant factor.
-  void scale_data(Dtype scale_factor);
+  //void scale_data(Dtype scale_factor);
 
   /**
    * @brief Set the data_ shared_ptr to point to the SyncedMemory holding the

@@ -74,7 +74,6 @@ inline void SyncedMemory::to_gpu() {
   switch (head_) {
   case UNINITIALIZED:
     gpu_ptr_ = gpu_malloc(size_);
-    // TODO 去除memset
     CUDA_CHECK(cudaMemsetAsync(gpu_ptr_, 0, size_, cudaStreamPerThread));
     head_ = HEAD_AT_GPU;
     own_gpu_data_ = true;
@@ -86,6 +85,7 @@ inline void SyncedMemory::to_gpu() {
     }
     CUDA_CHECK(cudaMemcpyAsync(gpu_ptr_, cpu_ptr_, size_, cudaMemcpyDefault,
                                cudaStreamPerThread)); // NOLINT(caffe/alt_fn)
+    CUDA_CHECK(cudaStreamSynchronize(cudaStreamPerThread));
     head_ = SYNCED;
     break;
   case HEAD_AT_GPU:

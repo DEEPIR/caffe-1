@@ -129,11 +129,11 @@ template <typename Dtype>
 void Blob<Dtype>::ShareData(const Blob& other) {
 #ifndef CPU_ONLY
   CHECK_EQ(count_, other.count());
-  CUDA_CHECK(cudaStreamSynchronize(cudaStreamPerThread));
 #endif
   data_ = other.data();
 }
 
+/*
 template <> void Blob<unsigned int>::scale_data(unsigned int scale_factor) {
   NOT_IMPLEMENTED;
 }
@@ -166,6 +166,7 @@ void Blob<Dtype>::scale_data(Dtype scale_factor) {
     LOG(FATAL) << "Unknown SyncedMemory head state: " << data_->head();
   }
 }
+*/
 
 template <typename Dtype>
 bool Blob<Dtype>::ShapeEquals(const BlobProto& other) {

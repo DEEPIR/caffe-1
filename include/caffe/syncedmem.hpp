@@ -28,12 +28,9 @@ public:
   void set_gpu_data(void *data);
   void *mutable_cpu_data();
   void *mutable_gpu_data();
-  enum SyncedHead { UNINITIALIZED, HEAD_AT_CPU, HEAD_AT_GPU, SYNCED };
-  SyncedHead head() { return head_; }
   size_t size() { return size_; }
-
-  std::shared_ptr<deepir::allocator::buddy_pool> host_pool_;
-  std::shared_ptr<deepir::allocator::buddy_pool> device_pool_;
+  enum SyncedHead { UNINITIALIZED, HEAD_AT_CPU, HEAD_AT_GPU, SYNCED };
+  SyncedHead head() const { return head_; }
 
 private:
   void check_device();
@@ -54,6 +51,9 @@ private:
   void *gpu_malloc(size_t size);
   void gpu_free(void *data);
   //std::mutex mem_mutex;
+
+  std::shared_ptr<deepir::allocator::buddy_pool> host_pool_;
+  std::shared_ptr<deepir::allocator::buddy_pool> device_pool_;
 
   DISABLE_COPY_AND_ASSIGN(SyncedMemory);
 }; // class SyncedMemory
