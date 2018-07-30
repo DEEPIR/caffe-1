@@ -40,7 +40,7 @@ namespace caffe {
                              const vector<Blob<Dtype>*>& top) const override;
 
     std::string normalize_type_;
-    bool rescale_;
+    bool rescale_{};
   };
 
 }

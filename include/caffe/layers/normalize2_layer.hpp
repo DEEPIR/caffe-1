@@ -40,8 +40,8 @@ class Normalize2Layer : public Layer<Dtype> {
   void Forward_const_gpu(const vector<Blob<Dtype>*>& bottom,
       const vector<Blob<Dtype>*>& top) const override;
 
-  bool across_spatial_;
-  bool channel_shared_;
+  bool across_spatial_{};
+  bool channel_shared_{};
   Dtype eps_;
 };
 
