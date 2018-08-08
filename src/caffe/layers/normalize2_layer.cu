@@ -2,8 +2,6 @@
 #include <cfloat>
 #include <vector>
 
-#include "thrust/device_vector.h"
-
 #include "caffe/filler.hpp"
 #include "caffe/layers/normalize2_layer.hpp"
 #include "caffe/util/math_functions.hpp"
@@ -53,9 +51,6 @@ void Normalize2Layer<Dtype>::Forward_const_gpu(
     // add eps to avoid overflow
     caffe_gpu_set<Dtype>(norm.count(), Dtype(eps_), norm_data);
   }
-  Blob<Dtype> sum_channel_multiplier;
-  sum_channel_multiplier.Reshape(1, channels, 1, 1);
-  caffe_set(channels, Dtype(1), sum_channel_multiplier.mutable_cpu_data());
   int num = bottom[0]->num();
   int dim = bottom[0]->count() / num;
   int spatial_dim = bottom[0]->height() * bottom[0]->width();
@@ -72,6 +67,9 @@ void Normalize2Layer<Dtype>::Forward_const_gpu(
       caffe_gpu_scale<Dtype>(dim, Dtype(1.0 / norm_data[n]), bottom_data,
                              top_data);
     } else {
+      Blob<Dtype> sum_channel_multiplier;
+      sum_channel_multiplier.Reshape(1, channels, 1, 1);
+      caffe_set(channels, Dtype(1), sum_channel_multiplier.mutable_cpu_data());
       caffe_gpu_gemv<Dtype>(CblasTrans, channels, spatial_dim, Dtype(1),
                             buffer_data, sum_channel_multiplier.gpu_data(),
                             Dtype(1), norm_data);
