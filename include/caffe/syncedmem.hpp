@@ -36,7 +36,7 @@ private:
   void check_device();
 
   void to_cpu();
-  void to_gpu();
+  void to_gpu(bool init_gpu_data);
   void *cpu_ptr_;
   void *gpu_ptr_;
   size_t size_;
