@@ -45,9 +45,6 @@ void CuDNNConvolutionLayer<Dtype>::Forward_const_gpu(
     workspace_fwd_sizes_[i] = 0;
   }
 
-  // Specify workspace limit for kernels directly until we have a
-  // planning strategy and a rewrite of Caffe's GPU memory mangagement
-
   if (!bottom_descs_ptr_.get()) {
     bottom_descs_ptr_.reset(new vector<cudnnTensorDescriptor_t>);
     for (int i = 0; i < bottom.size(); i++) {
@@ -75,18 +72,6 @@ void CuDNNConvolutionLayer<Dtype>::Forward_const_gpu(
       conv_descs_ptr_->push_back(conv_desc);
     }
   }
-
-  /*
-  if (!handle_ptr_.get()) {
-    handle_ptr_.reset(new vector<cudnnHandle_t>(this->group_, {}));
-
-
-    for (int g = 0; g < this->group_; g++) {
-      CUDNN_CHECK(cudnnCreate(&(*handle_ptr_)[g]));
-      CUDNN_CHECK(cudnnSetStream((*handle_ptr_)[g], cudaStreamPerThread));
-    }
-  }
-  */
 
   if (!filter_desc_ptr_.get()) {
     // Create filter descriptor.
