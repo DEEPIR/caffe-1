@@ -68,13 +68,15 @@ inline void SyncedMemory::to_cpu() {
   }
 }
 
-inline void SyncedMemory::to_gpu() {
+inline void SyncedMemory::to_gpu(bool init_gpu_data) {
   check_device();
 #ifndef CPU_ONLY
   switch (head_) {
   case UNINITIALIZED:
     gpu_ptr_ = gpu_malloc(size_);
-    CUDA_CHECK(cudaMemsetAsync(gpu_ptr_, 0, size_, cudaStreamPerThread));
+    if(init_gpu_data) {
+      CUDA_CHECK(cudaMemsetAsync(gpu_ptr_, 0, size_, cudaStreamPerThread));
+    }
     head_ = HEAD_AT_GPU;
     own_gpu_data_ = true;
     break;
@@ -117,7 +119,7 @@ void SyncedMemory::set_cpu_data(void *data) {
 const void *SyncedMemory::gpu_data() {
   check_device();
 #ifndef CPU_ONLY
-  to_gpu();
+  to_gpu(true);
   return (const void *)gpu_ptr_;
 #else
   NO_GPU;
@@ -150,7 +152,7 @@ void *SyncedMemory::mutable_cpu_data() {
 void *SyncedMemory::mutable_gpu_data() {
   check_device();
 #ifndef CPU_ONLY
-  to_gpu();
+  to_gpu(true);
   head_ = HEAD_AT_GPU;
   return gpu_ptr_;
 #else
