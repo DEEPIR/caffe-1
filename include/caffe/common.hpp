@@ -17,12 +17,6 @@
 
 #include "caffe/util/device_alternate.hpp"
 
-namespace deepir {
-namespace allocator {
-class buddy_pool;
-}
-} // namespace deepir
-
 // Convert macro to string
 #define STRINGIFY(m) #m
 #define AS_STRING(m) STRINGIFY(m)
@@ -101,12 +95,6 @@ public:
 
 #ifndef CPU_ONLY
   inline static cublasHandle_t cublas_handle() { return Get().cublas_handle_; }
-  inline static std::shared_ptr<deepir::allocator::buddy_pool> host_pool() {
-    return Get().host_pool_;
-  }
-  inline static std::shared_ptr<deepir::allocator::buddy_pool> device_pool() {
-    return Get().device_pool_;
-  }
 
 #ifdef USE_CUDNN
   inline static cudnnHandle_t  cudnn_handle() { return Get().cudnn_handle_; }
@@ -122,8 +110,6 @@ public:
 private:
 #ifndef CPU_ONLY
   cublasHandle_t cublas_handle_{nullptr};
-  std::shared_ptr<deepir::allocator::buddy_pool> host_pool_;
-  std::shared_ptr<deepir::allocator::buddy_pool> device_pool_;
 #ifdef USE_CUDNN
   cudnnHandle_t cudnn_handle_{nullptr};
 #endif

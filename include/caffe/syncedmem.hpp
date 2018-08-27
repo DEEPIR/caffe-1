@@ -50,10 +50,7 @@ private:
 
   void *gpu_malloc(size_t size);
   void gpu_free(void *data);
-  //std::mutex mem_mutex;
 
-  std::shared_ptr<deepir::allocator::buddy_pool> host_pool_;
-  std::shared_ptr<deepir::allocator::buddy_pool> device_pool_;
 
   DISABLE_COPY_AND_ASSIGN(SyncedMemory);
 }; // class SyncedMemory

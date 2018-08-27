@@ -7,10 +7,6 @@
 #include <process.h>
 #endif
 
-#ifndef CPU_ONLY
-#include <deepir/allocator/buddy_pool.hpp>
-#endif
-
 #include "caffe/common.hpp"
 
 namespace caffe {
@@ -81,10 +77,6 @@ void Caffe::set_device(int device_id) {
   CUDNN_CHECK(cudnnSetStream(Get().cudnn_handle_, cudaStreamPerThread));
 #endif
 
-  Get().host_pool_ = std::make_shared<deepir::allocator::buddy_pool>(
-      deepir::allocator::buddy_pool::alloc_location::host);
-  Get().device_pool_ = std::make_shared<deepir::allocator::buddy_pool>(
-      deepir::allocator::buddy_pool::alloc_location::device);
 }
 
 const char *cublasGetErrorString(cublasStatus_t error) {

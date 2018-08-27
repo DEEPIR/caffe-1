@@ -53,10 +53,6 @@ inline void SyncedMemory::to_cpu() {
     CUDA_CHECK(cudaMemcpyAsync(cpu_ptr_, gpu_ptr_, size_, cudaMemcpyDefault,
                                cudaStreamPerThread)); // NOLINT(caffe/alt_fn)
     CUDA_CHECK(cudaStreamSynchronize(cudaStreamPerThread));
-    //我們確信該線程的任務暫時完成，所以釋放一些顯存
-    if (device_pool_.get()) {
-      device_pool_->release_pool();
-    }
     head_ = SYNCED;
 #else
     NO_GPU;
@@ -178,26 +174,19 @@ void SyncedMemory::check_device() {
 
 #ifndef CPU_ONLY
 void *SyncedMemory::gpu_malloc(size_t size) {
+  auto device_id=Caffe::GetDevice();
+  if(device_id<0) {
+    return nullptr;
+  }
+
   void *ptr = nullptr;
 
-  /*
-  if(!mem_mutex.try_lock()) {
-    throw std::runtime_error("concurrent update");
-  }
-  */
-  device_pool_ = Caffe::device_pool();
-  if (device_pool_.get()) {
-    ptr = device_pool_->alloc(size);
-    if (ptr) {
-      // mem_mutex.unlock();
-      return ptr;
-    }
+  ptr = deepir::allocator::buddy_pool::alloc_device(device_id, size);
+  if (ptr) {
+    return ptr;
   }
 
-  device_pool_.reset();
   CUDA_CHECK(cudaMalloc(&ptr, size));
-  // mem_mutex.unlock();
-
   return ptr;
 }
 
@@ -206,10 +195,11 @@ void SyncedMemory::gpu_free(void *data) {
     return;
   }
 
-  if (device_pool_.get()) {
-    CHECK(device_pool_->free(data)) << "free device failed";
-    device_pool_.reset();
-    return;
+  auto device_id=Caffe::GetDevice();
+  if(device_id>=0) {
+    if(deepir::allocator::buddy_pool::free_device(device_id,data)) {
+      return;
+    }
   }
   CUDA_CHECK(cudaFree(data));
 }
@@ -221,29 +211,19 @@ void SyncedMemory::gpu_free(void *data) {
 // but might be more significant for parallel training. Most importantly,
 // it improved stability for large models on many GPUs.
 void *SyncedMemory::host_malloc(size_t size) {
-  /*
-  if(!mem_mutex.try_lock()) {
-    throw std::runtime_error("concurrent update");
-  }
-  */
   void *ptr = nullptr;
 #ifndef CPU_ONLY
   constexpr size_t pinned_memory_max_size = 128;
   if (Caffe::mode() == Caffe::GPU && size <= pinned_memory_max_size) {
-    host_pool_ = Caffe::host_pool();
-    if (host_pool_) {
-      ptr = host_pool_->alloc(size);
-      if (ptr) {
-        cpu_malloc_use_cuda_ = true;
-        // mem_mutex.unlock();
-        return ptr;
-      }
+    ptr = deepir::allocator::buddy_pool::alloc_host(size);
+    if (ptr) {
+      cpu_malloc_use_cuda_ = true;
+      return ptr;
     }
-    host_pool_.reset();
+
     if (cudaMallocHost(&ptr, size) == cudaSuccess) {
       CHECK(ptr) << "host allocation of size " << size << " failed";
       cpu_malloc_use_cuda_ = true;
-      // mem_mutex.unlock();
       return ptr;
     }
   }
@@ -255,16 +235,13 @@ void *SyncedMemory::host_malloc(size_t size) {
 #endif
   cpu_malloc_use_cuda_ = false;
   CHECK(ptr) << "host allocation of size " << size << " failed";
-  // mem_mutex.unlock();
   return ptr;
 }
 
 void SyncedMemory::host_free(void *ptr) {
 #ifndef CPU_ONLY
   if (cpu_malloc_use_cuda_) {
-    if (host_pool_.get()) {
-      CHECK(host_pool_->free(ptr)) << "free host failed";
-      host_pool_.reset();
+    if (deepir::allocator::buddy_pool::free_host(ptr)) {
       return;
     }
     CUDA_CHECK(cudaFreeHost(ptr));
