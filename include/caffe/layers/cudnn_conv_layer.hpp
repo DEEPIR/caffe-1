@@ -53,6 +53,7 @@ protected:
         for (int i = 0; i < descs->size(); i++) {
           cudnnDestroyTensorDescriptor((*descs)[i]);
         }
+        delete descs;
       }};
 
   mutable ::boost::thread_specific_ptr<vector<cudnnTensorDescriptor_t>>
@@ -60,16 +61,19 @@ protected:
         for (int i = 0; i < descs->size(); i++) {
           cudnnDestroyTensorDescriptor((*descs)[i]);
         }
+        delete descs;
       }};
 
   mutable ::boost::thread_specific_ptr<cudnnTensorDescriptor_t> bias_desc_ptr_{
       [](cudnnTensorDescriptor_t *desc) {
         cudnnDestroyTensorDescriptor(*desc);
+        delete desc;
       }};
 
   mutable ::boost::thread_specific_ptr<cudnnFilterDescriptor_t>
       filter_desc_ptr_{[](cudnnFilterDescriptor_t *desc) {
         cudnnDestroyFilterDescriptor(*desc);
+        delete desc;
       }};
 
   mutable ::boost::thread_specific_ptr<vector<cudnnConvolutionDescriptor_t>>
@@ -77,6 +81,7 @@ protected:
         for (int i = 0; i < descs->size(); i++) {
           cudnnDestroyConvolutionDescriptor((*descs)[i]);
         }
+        delete descs;
       }};
 
   int bias_offset_;

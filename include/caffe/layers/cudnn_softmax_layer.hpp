@@ -38,11 +38,13 @@ protected:
   mutable ::boost::thread_specific_ptr<cudnnTensorDescriptor_t>
       bottom_desc_ptr_{[](cudnnTensorDescriptor_t *desc) {
         cudnnDestroyTensorDescriptor(*desc);
+        delete desc;
       }};
 
   mutable ::boost::thread_specific_ptr<cudnnTensorDescriptor_t> top_desc_ptr_{
       [](cudnnTensorDescriptor_t *desc) {
         cudnnDestroyTensorDescriptor(*desc);
+        delete desc;
       }};
 };
 #endif
