@@ -175,9 +175,7 @@ void SyncedMemory::check_device() {
 #ifndef CPU_ONLY
 void *SyncedMemory::gpu_malloc(size_t size) {
   auto device_id = Caffe::GetDevice();
-  if (device_id < 0) {
-    return nullptr;
-  }
+  CHECK(device_id >= 0) << "device allocation of size " << size << " failed";
 
   void *ptr = deepir::allocator::buddy_pool::alloc_device(device_id, size);
   if (ptr) {
