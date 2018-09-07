@@ -70,7 +70,7 @@ inline void SyncedMemory::to_gpu(bool init_gpu_data) {
   switch (head_) {
   case UNINITIALIZED:
     gpu_ptr_ = gpu_malloc(size_);
-    if(init_gpu_data) {
+    if (init_gpu_data) {
       CUDA_CHECK(cudaMemsetAsync(gpu_ptr_, 0, size_, cudaStreamPerThread));
     }
     head_ = HEAD_AT_GPU;
@@ -174,14 +174,12 @@ void SyncedMemory::check_device() {
 
 #ifndef CPU_ONLY
 void *SyncedMemory::gpu_malloc(size_t size) {
-  auto device_id=Caffe::GetDevice();
-  if(device_id<0) {
+  auto device_id = Caffe::GetDevice();
+  if (device_id < 0) {
     return nullptr;
   }
 
-  void *ptr = nullptr;
-
-  ptr = deepir::allocator::buddy_pool::alloc_device(device_id, size);
+  void *ptr = deepir::allocator::buddy_pool::alloc_device(device_id, size);
   if (ptr) {
     return ptr;
   }
@@ -195,9 +193,9 @@ void SyncedMemory::gpu_free(void *data) {
     return;
   }
 
-  auto device_id=Caffe::GetDevice();
-  if(device_id>=0) {
-    if(deepir::allocator::buddy_pool::free_device(device_id,data)) {
+  auto device_id = Caffe::GetDevice();
+  if (device_id >= 0) {
+    if (deepir::allocator::buddy_pool::free_device(device_id, data)) {
       return;
     }
   }
