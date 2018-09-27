@@ -174,8 +174,8 @@ void SyncedMemory::check_device() {
 
 #ifndef CPU_ONLY
 void *SyncedMemory::gpu_malloc(size_t size) {
-  auto device_id = Caffe::GetDevice();
-  CHECK(device_id >= 0) << "device allocation of size " << size << " failed";
+  device_id_ = Caffe::GetDevice();
+  CHECK(device_id_ >= 0) << "device allocation of size " << size << " failed";
 
   void *ptr = deepir::allocator::buddy_pool::alloc_device(device_id, size);
   if (ptr) {
@@ -191,11 +191,9 @@ void SyncedMemory::gpu_free(void *data) {
     return;
   }
 
-  auto device_id = Caffe::GetDevice();
-  if (device_id >= 0) {
-    if (deepir::allocator::buddy_pool::free_device(device_id, data)) {
-      return;
-    }
+  CUDA_CHECK(cudaStreamSynchronize(cudaStreamPerThread));
+  if (deepir::allocator::buddy_pool::free_device(device_id_, data)) {
+    return;
   }
   CUDA_CHECK(cudaFree(data));
 }

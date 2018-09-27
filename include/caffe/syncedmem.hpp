@@ -44,6 +44,7 @@ private:
   bool own_cpu_data_;
   bool cpu_malloc_use_cuda_;
   bool own_gpu_data_;
+  int device_id_;
 
   void *host_malloc(size_t size);
   void host_free(void *ptr);
