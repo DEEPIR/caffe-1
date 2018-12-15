@@ -47,10 +47,12 @@ if(NOT HAVE_CUDA)
 
   list(APPEND Caffe_DEFINITIONS PUBLIC -DCPU_ONLY)
 else()
-  find_package(DeepirAllocator REQUIRED)
-  get_target_property(DeepirAllocator_INCLUDE_DIRS DeepirAllocator INTERFACE_INCLUDE_DIRECTORIES)
-  list(APPEND Caffe_INCLUDE_DIRS PRIVATE ${DeepirAllocator_INCLUDE_DIRS})
-  list(APPEND Caffe_LINKER_LIBS PRIVATE DeepirAllocator)
+  if(NOT CPU_ONLY)
+    find_package(DeepirAllocator REQUIRED)
+    get_target_property(DeepirAllocator_INCLUDE_DIRS DeepirAllocator INTERFACE_INCLUDE_DIRECTORIES)
+    list(APPEND Caffe_INCLUDE_DIRS PRIVATE ${DeepirAllocator_INCLUDE_DIRS})
+    list(APPEND Caffe_LINKER_LIBS PRIVATE DeepirAllocator)
+  endif()
 endif()
 
 # ---[ OpenCV
